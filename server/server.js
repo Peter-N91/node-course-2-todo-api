@@ -45,7 +45,7 @@ app.get('/todos/:id', (req, res) => {
       return res.status(404).send();
     }
 
-    res.status(200).send(todo); // or res.status(200).send({todo}) or res.status(200).send({todo: todo})
+    res.status(200).send({todo}); // or res.status(200).send(todo) or res.status(200).send({todo: todo})
   }, (e) => {
     res.status(400).send();
   })

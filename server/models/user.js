@@ -43,7 +43,7 @@ UserSchema.methods.toJSON = function () { // shows what to be returned when the 
 };
 
 UserSchema.methods.generateAuthToken = function () {
-  var user = this;
+  var user = this;   // instance methods get called as a document (lower case)
   var access = 'auth';
   var token = jwt.sign({_id: user._id.toHexString(), access}, 'abc123').toString();
 
@@ -53,6 +53,28 @@ UserSchema.methods.generateAuthToken = function () {
     return token;
   })
 }; // we use the old function to bind the this keyword
+
+UserSchema.statics.findByToken = function(token) {
+  var User =  this; // model methods get called as a model (upper case)
+  var decoded;
+
+  // jwt.verify() // this function will throw an error if no match found so we use try catch
+  try {
+    decoded = jwt.verify(token, 'abc123');
+  } catch (e) {
+    // return new Promise((resolve, reject) => {
+    //   reject();
+    // });
+    // OR
+    return Promise.reject();
+  }
+
+  return User.findOne({
+    '_id': decoded._id,
+    'tokens.token': token, // inside quotes because we are looking inside tokens array
+    'tokens.access': 'auth'
+  });
+};
 
 var User = mongoose.model('User', UserSchema);
 

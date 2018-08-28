@@ -8,6 +8,7 @@ const {ObjectID} = require('mongodb');
 var {mongoose} = require('./db/mongoose');
 var {Todo} = require('./models/todo');
 var {User} = require('./models/user');
+var {authenticate} = require('./middleware/authenticate');
 
 var app = express();
 // const port = process.env.PORT || 3000;
@@ -116,6 +117,24 @@ app.post('/users', (req, res) => {
   }).catch((e) => {
     res.status(400).send(e);
   });
+});
+
+// Private route
+app.get('/users/me', authenticate, (req, res) => { // adding authenticate to use the middleware function
+  // var token = req.header('x-auth');
+  //
+  // User.findByToken(token).then((user) => {
+  //   if (!user) {
+  //     return Promise.reject(); // it will trigger the catch function
+  //   }
+  //
+  //   res.send(user);
+  // }).catch((e) => {
+  //   res.status(401).send();
+  // });
+
+  // now we will use the middleware
+  res.send(req.user);
 });
 
 app.listen(port, () => {

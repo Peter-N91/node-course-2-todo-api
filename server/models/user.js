@@ -55,6 +55,17 @@ UserSchema.methods.generateAuthToken = function () {
   })
 }; // we use the old function to bind the this keyword
 
+UserSchema.methods.removeToken = function (token) {
+  var user = this;
+
+  return user.update({
+    $pull: {
+      tokens: {token}
+    }
+  });
+};
+
+
 UserSchema.statics.findByToken = function(token) {
   var User =  this; // model methods get called as a model (upper case)
   var decoded;
